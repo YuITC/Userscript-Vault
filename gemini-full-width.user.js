@@ -5,6 +5,8 @@
 // @description  Expands the width of the chat interface in Google Gemini for larger screens.
 // @author       Tai Nguyen Phu
 // @match        https://gemini.google.com/*
+// @updateURL    https://raw.githubusercontent.com/YuITC/Userscript-Vault/Main/gemini-full-width.user.js
+// @downloadURL  https://raw.githubusercontent.com/YuITC/Userscript-Vault/Main/gemini-full-width.user.js
 // @grant        none
 // ==/UserScript==
 
