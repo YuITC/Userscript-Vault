@@ -1,68 +1,98 @@
 // ==UserScript==
-// @name         Gemini Full Width UI
+// @name         Gemini Full Width Chat
 // @namespace    http://tampermonkey.net/
-// @version      1.5
-// @description  Expands the width of the chat interface in Google Gemini safely.
-// @author       Tai Nguyen Phu
+// @version      1.0
+// @description  Expand toàn bộ khung chat Gemini
 // @match        https://gemini.google.com/*
-// @updateURL    https://raw.githubusercontent.com/YuITC/Userscript-Vault/refs/heads/Main/gemini-full-width.user.js
-// @downloadURL  https://raw.githubusercontent.com/YuITC/Userscript-Vault/refs/heads/Main/gemini-full-width.user.js
-// @grant        none
+// @match        https://gemini.google.com/app/*
+// @grant        GM_addStyle
 // ==/UserScript==
 
-(function() {
+(function () {
     'use strict';
 
-    function addStyle(css) {
-        const style = document.createElement('style');
-        style.type = 'text/css';
-        style.appendChild(document.createTextNode(css));
-        document.head.appendChild(style);
+    GM_addStyle(`
+        /* Wrapper chính */
+        main,
+        main > div,
+        main > div > div {
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+
+        /* Gemini responses */
+        .conversation-container {
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+
+        /* User messages */
+        user-query,
+        user-query > div,
+        user-query > div > div {
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+
+        /* Model responses */
+        model-response,
+        model-response > div,
+        model-response > div > div {
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+
+        /* Composer / input */
+        .text-input-field_textarea-wrapper,
+        .text-input-field_textarea,
+        textarea {
+            max-width: 100% !important;
+            width: 100% !important;
+        }
+    `);
+
+    function expandChat() {
+
+        // Gemini message blocks
+        document.querySelectorAll('.conversation-container')
+            .forEach(el => {
+                el.style.maxWidth = '100%';
+                el.style.width = '100%';
+            });
+
+        // User queries
+        document.querySelectorAll('user-query, user-query > div, user-query > div > div')
+            .forEach(el => {
+                el.style.maxWidth = '100%';
+                el.style.width = '100%';
+            });
+
+        // Model responses
+        document.querySelectorAll('model-response, model-response > div, model-response > div > div')
+            .forEach(el => {
+                el.style.maxWidth = '100%';
+                el.style.width = '100%';
+            });
+
+        // Main wrappers
+        document.querySelectorAll('main, main > div, main > div > div')
+            .forEach(el => {
+                el.style.maxWidth = '100%';
+                el.style.width = '100%';
+            });
     }
 
-    const customCSS = `
-        /* 1. Unlock the parent wrapper to 100% so the scrollbar sticks to the right edge */
-        main > div > div,
-        [class*="conversation-container"],
-        [class*="bottom-container"] {
-            max-width: 100% !important;
-        }
+    // Initial apply
+    expandChat();
 
-        /* 2. Expand chat bubbles and input form to 90% and center them horizontally */
-        model-response,
-        user-query,
-        .message-content,
-        [class*="message-container"],
-        [class*="input-area"],
-        main form {
-            max-width: 90% !important;
-            width: 100% !important;
-            margin-left: auto !important;
-            margin-right: auto !important;
-        }
+    // Re-apply when Gemini rerenders DOM
+    const observer = new MutationObserver(() => {
+        expandChat();
+    });
 
-        /* 3. Ensure Code blocks and Markdown content stretch to fill the 90% container */
-        markdown-content,
-        code-block,
-        [class*="code-block"],
-        pre {
-            max-width: 100% !important;
-            width: 100% !important;
-        }
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
 
-        /* 4. Completely fix Tables AND their invisible wrapper divs */
-        markdown-content table,
-        markdown-content div:has(table),
-        [class*="table"] {
-            max-width: 100% !important;
-            width: 100% !important;
-        }
-
-        /* Fix basic table display issues */
-        .markdown table {
-            display: table !important;
-        }
-    `;
-
-    addStyle(customCSS);
 })();
